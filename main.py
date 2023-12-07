@@ -1,4 +1,5 @@
 import hashlib
+import json
 
 def new_mdp():
     mdp = input("Entrez un mot de passe avec au moins 8 caractères dont une majuscule , une minuscule, un chifre et un caractère speciaux : \n")
@@ -21,7 +22,8 @@ def new_mdp():
 
         if nbcar ==True and maj == True and minus == True and chiffre == True and spe == True:
             print("Le mot de passe est corect")
-            cryp_mdp(mdp)
+            print(cryp_mdp(mdp))
+            enregistrer_mdp(mdp,cryp_mdp(mdp))
             condition = True
         else:
             print("Le mot de passe n'est pas correct")
@@ -29,6 +31,23 @@ def new_mdp():
 
 def cryp_mdp(mdp):
     cryp = hashlib.sha256(mdp.encode()).hexdigest()
-    print(cryp)
+    return cryp
+
+
+def enregistrer_mdp(mdp, cryp_mdp):
+    mdp_list = [mdp, cryp_mdp]
+    try:
+        with open("mdp.json", "r") as gest:
+            try:
+                data = json.load(gest)
+            except json.decoder.JSONDecodeError:
+                data = []
+    except FileNotFoundError:
+        data = []
+
+    with open("mdp.json", "w") as gest:
+        data.append(mdp_list)
+        json.dump(data, gest)
+        print(data)
 
 new_mdp()
